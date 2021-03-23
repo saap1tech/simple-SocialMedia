@@ -1,0 +1,45 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="stylesheet" type="text/css" href="{%static 'css/chat.css'%}">
+    <link rel="stylesheet" type="text/css" href="{%static 'css/sidebar.css'%}">
+</head>
+<body>
+
+    <div class="app">
+        <div class="sidebar">
+            <div class="sidebar_header">
+                <div class="sidebar_headerRight">
+                    Hello {{request.user}}
+                </div>
+
+                <img style="width: 10%;" src="/media/profile.png">
+            </div>
+            <div class="sidebar_search">
+                <div class="sidebar_searchContainer">
+                    <input placeholder="Search here " type="text">
+                </div>
+            </div>
+            <div class="sidebar_chats">
+                {% for room in rooms %}
+                <a href="direct/{{room.username}}/" style="color: black; text-decoration: none;">
+                    <div class="SidebarChat">
+                        <img style="width: 11%; height: 8%;" src="/media/profile.png">
+                        <div class="sidebarChat_info">
+                            <h2 id="room">{{room.username}}</h2>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="chat">
+            Please select a chat room
+        </div>
+    </div>
+
+</body>
+</html>

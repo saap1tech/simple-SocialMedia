@@ -1,0 +1,13 @@
+{% for item in data %}
+    {% if item.sender == request.user.username %}
+    <div class="message__sender message">
+        <div class="message__name">You</div>
+        <p>{{item.msg}}</p>
+    </div>
+    {% else %}
+    <div class="message">
+        <div class="message__name">{{item.sender}}</div>
+        <p>{{item.msg}}</p>
+    </div>
+    {% endif %}
+{% endfor %}

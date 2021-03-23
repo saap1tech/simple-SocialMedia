@@ -1,0 +1,100 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat room</title>
+    <link rel="stylesheet" type="text/css" href="{%static 'css/chat.css'%}">
+    <link rel="stylesheet" type="text/css" href="{%static 'css/sidebar.css'%}">
+    <link rel="stylesheet" type="text/css" href="{%static 'css/message.css'%}">
+</head>
+<body>
+     <div class="app">
+        <div class="sidebar">
+            <div class="sidebar_header">
+                <div class="sidebar_headerRight">
+                    Hello {{request.user}}
+                </div>
+                <img style="width: 10%;" src="/media/profile.png">
+            </div>
+            <div class="sidebar_search">
+                <div class="sidebar_searchContainer">
+                    <input placeholder="Search here " type="text">
+                </div>
+            </div>
+            <div class="sidebar_chats">
+                {% for room in rooms %}
+                <a href="/chat/direct/{{room.username}}/" style="color: black; text-decoration: none;">
+                    <div class="SidebarChat">
+                        <img style="width: 11%; height: 8%;" src="/media/profile.png">
+                        <div class="sidebarChat_info">
+                            <h2 id="room">{{room.username}}</h2>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="chat">
+        <div class="chat__header">
+            <h4>
+              To: <span class="chat__name">{{receiver}}</span>
+            </h4>
+            <strong>Details</strong>
+        </div>
+        <div class="chat__messages">
+            <div id="msgs"></div>
+        </div>
+
+        <div class="chat__input">
+            <form id="form">
+                {% csrf_token %}
+                <input type="text" id="message" name="message" required/>
+                <button type="submit">send</button>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+        // Show
+        function show(){
+            var show1 = document.getElementById('msgs');
+            axios.get('/chat/show')
+                .then(function(resp){
+                    show1.innerHTML = resp.data
+                })
+                .catch(function(err){
+                    console.log(err);
+                })
+        }
+
+        var myVar = setInterval(show, 1000);
+
+        // Sending data
+        var form = document.getElementById('form');
+        var receiver = "{{receiver}}";
+        form.addEventListener("submit", function(e){
+            e.preventDefault();
+            var fd = new FormData();
+            fd.append("message", document.getElementById('message').value);
+            fd.append('receiver', receiver);
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+            axios.post('/chat/send/', fd)
+                .then(function(resp){
+                    if (resp.data.status == 'success'){
+                        document.getElementById('message').value = "";
+                        console.log('success');
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                })
+        })
+    </script>
+
+</body>
+</html>
